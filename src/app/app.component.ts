@@ -1,5 +1,5 @@
 import { Component, inject } from '@angular/core';
-import { RouterLink, RouterOutlet } from '@angular/router';
+import { Router, RouterLink, RouterOutlet } from '@angular/router';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
@@ -7,6 +7,8 @@ import { NgIf } from '@angular/common';
 import { HealthService } from './core/health.service';
 import { MatChipsModule } from '@angular/material/chips';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
+import { MatDialog } from '@angular/material/dialog';
+import { ShelfSummaryDialog } from './features/shelves/shelf-summary-dialog';
 
 @Component({
   selector: 'app-root',
@@ -19,12 +21,21 @@ import { MatSnackBarModule } from '@angular/material/snack-bar';
   template: `
     <mat-toolbar color="primary" class="app-toolbar">
       <span class="brand" routerLink="/">Assignment</span>
-      <span class="spacer"></span>
-      <a mat-button routerLink="/">Devices</a>
-      <a mat-button routerLink="/devices/new">Create Device</a>
-      <a mat-button routerLink="/shelves/new">Create Shelf</a>
 
       <span class="spacer"></span>
+
+      <a mat-button routerLink="/">Devices</a>
+      <a mat-button routerLink="/devices/new">Create Device</a>
+      <a mat-button routerLink="/shelves">Shelves</a>
+      <a mat-button routerLink="/shelves/new">Create Shelf</a>
+
+      <button mat-stroked-button (click)="openShelfSummaryDialog()">
+        <mat-icon>view_list</mat-icon>
+        Shelf Summary
+      </button>
+
+      <span class="spacer"></span>
+
       <ng-container *ngIf="healthService.health() as h">
         <mat-chip-set>
           <mat-chip [color]="h.neo4jConnectivity ? 'accent' : 'warn'" selected>
@@ -43,10 +54,15 @@ import { MatSnackBarModule } from '@angular/material/snack-bar';
   `]
 })
 export class AppComponent {
-
   healthService = inject(HealthService);
+  dialog = inject(MatDialog);
+  router = inject(Router);
 
-  constructor() {
-    this.healthService.load();
+  constructor() { this.healthService.load(); }
+
+  openShelfSummaryDialog() {
+    this.dialog.open(ShelfSummaryDialog).afterClosed().subscribe(id => {
+      if (id) this.router.navigate(['/shelves', id]);
+    });
   }
 }

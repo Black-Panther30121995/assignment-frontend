@@ -11,6 +11,8 @@ export class ShelfService {
   private base = `${environment.apiBaseUrl}/api/shelves`;
   constructor(private http: HttpClient) {}
 
+  list() { return this.http.get<Shelf[]>(this.base); }              
+
   create(req: CreateShelfRequest) { return this.http.post<Shelf>(this.base, req); }
   getById(shelfId: string) { return this.http.get<Shelf>(`${this.base}/${shelfId}`); }
   update(shelfId: string, req: UpdateShelfRequest) { return this.http.put<Shelf>(`${this.base}/${shelfId}`, req); }
