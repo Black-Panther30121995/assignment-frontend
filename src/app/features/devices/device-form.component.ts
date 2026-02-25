@@ -11,43 +11,46 @@ import { MatButtonModule } from '@angular/material/button';
   standalone: true,
   selector: 'app-device-form',
   imports: [ReactiveFormsModule, MatCardModule, MatFormFieldModule, MatInputModule, MatButtonModule],
-  template: `
-    <mat-card>
-      <h2>{{ isEdit() ? 'Update Device' : 'Create Device' }}</h2>
+template: `
+  <mat-card class="stack" style="max-width: 860px; margin-inline: auto;">
+    <h2>{{ isEdit() ? 'Update Device' : 'Create Device' }}</h2>
 
-      <form [formGroup]="form" (ngSubmit)="onSubmit()">
-        <div class="grid">
-          <mat-form-field appearance="outline">
-            <mat-label>Device Name</mat-label>
-            <input matInput formControlName="deviceName" required>
-          </mat-form-field>
+    <form [formGroup]="form" (ngSubmit)="onSubmit()" class="stack">
+      <div class="grid-auto">
+        <mat-form-field appearance="outline">
+          <mat-label>Device Name</mat-label>
+          <input matInput formControlName="deviceName" required>
+        </mat-form-field>
 
-          <mat-form-field appearance="outline">
-            <mat-label>Part Number</mat-label>
-            <input matInput formControlName="partNumber" required>
-          </mat-form-field>
+        <mat-form-field appearance="outline">
+          <mat-label>Part Number</mat-label>
+          <input matInput formControlName="partNumber" required>
+        </mat-form-field>
 
-          <mat-form-field appearance="outline">
-            <mat-label>Building Name</mat-label>
-            <input matInput formControlName="buildingName" required>
-          </mat-form-field>
+        <mat-form-field appearance="outline">
+          <mat-label>Building Name</mat-label>
+          <input matInput formControlName="buildingName" required>
+        </mat-form-field>
 
-          <mat-form-field appearance="outline">
-            <mat-label>Device Type</mat-label>
-            <input matInput formControlName="deviceType" required>
-          </mat-form-field>
+        <mat-form-field appearance="outline">
+          <mat-label>Device Type</mat-label>
+          <input matInput formControlName="deviceType" required>
+        </mat-form-field>
 
-          <mat-form-field appearance="outline">
-            <mat-label>Number of Shelf Positions</mat-label>
-            <input type="number" min="1" matInput formControlName="numberOfShelfPositions" required>
-          </mat-form-field>
-        </div>
+        <mat-form-field appearance="outline">
+          <mat-label>Number of Shelf Positions</mat-label>
+          <input type="number" min="1" matInput formControlName="numberOfShelfPositions" required>
+        </mat-form-field>
+      </div>
 
+      <div class="row">
         <button mat-raised-button color="primary" [disabled]="form.invalid || submitting()">Save</button>
         <button mat-button type="button" (click)="cancel()">Cancel</button>
-      </form>
-    </mat-card>
-  `,
+        <span class="spacer"></span>
+      </div>
+    </form>
+  </mat-card>
+`,
   styles: [`
     .grid { display:grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 16px; }
     form { display:flex; flex-direction: column; gap: 16px; }

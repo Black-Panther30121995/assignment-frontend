@@ -13,50 +13,61 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
   standalone: true,
   selector: 'app-devices-list',
   imports: [NgIf, RouterLink, MatTableModule, MatButtonModule, MatIconModule, MatCardModule, MatProgressSpinnerModule],
-  template: `
-    <mat-card>
-      <div class="header">
-        <h2>Devices</h2>
-        <span class="spacer"></span>
-        <a mat-raised-button color="primary" routerLink="/devices/new"><mat-icon>add</mat-icon> Create Device</a>
-        <a mat-stroked-button color="primary" routerLink="/shelves/new" class="ml-8"><mat-icon>add_box</mat-icon> Create Shelf</a>
-      </div>
+template: `
+  <mat-card class="stack">
+    <div class="row">
+      <h2 class="section-title">Devices</h2>
+      <span class="spacer"></span>
+      <a mat-raised-button color="primary" routerLink="/devices/new">
+        <mat-icon>add</mat-icon> Create Device
+      </a>
+      <a mat-stroked-button color="primary" routerLink="/shelves/new">
+        <mat-icon>add_box</mat-icon> Create Shelf
+      </a>
+    </div>
 
-      <div *ngIf="loading()" class="center"><mat-spinner diameter="42"></mat-spinner></div>
+    <div *ngIf="loading()" class="center">
+      <mat-spinner diameter="42"></mat-spinner>
+    </div>
 
-      <table mat-table [dataSource]="devices() || []" *ngIf="!loading()">
-        <ng-container matColumnDef="deviceName">
-          <th mat-header-cell *matHeaderCellDef> Name </th>
-          <td mat-cell *matCellDef="let d">{{ d.deviceName }}</td>
-        </ng-container>
-        <ng-container matColumnDef="partNumber">
-          <th mat-header-cell *matHeaderCellDef> Part # </th>
-          <td mat-cell *matCellDef="let d">{{ d.partNumber }}</td>
-        </ng-container>
-        <ng-container matColumnDef="buildingName">
-          <th mat-header-cell *matHeaderCellDef> Building </th>
-          <td mat-cell *matCellDef="let d">{{ d.buildingName }}</td>
-        </ng-container>
-        <ng-container matColumnDef="deviceType">
-          <th mat-header-cell *matHeaderCellDef> Type </th>
-          <td mat-cell *matCellDef="let d">{{ d.deviceType }}</td>
-        </ng-container>
-        <ng-container matColumnDef="actions">
-          <th mat-header-cell *matHeaderCellDef></th>
-          <td mat-cell *matCellDef="let d">
-            <a mat-button color="primary" [routerLink]="['/devices', d.deviceId]"><mat-icon>visibility</mat-icon> Summary</a>
-          </td>
-        </ng-container>
+    <table mat-table [dataSource]="devices() || []" *ngIf="!loading()">
+      <ng-container matColumnDef="deviceName">
+        <th mat-header-cell *matHeaderCellDef> Name </th>
+        <td mat-cell *matCellDef="let d">{{ d.deviceName }}</td>
+      </ng-container>
+      <ng-container matColumnDef="partNumber">
+        <th mat-header-cell *matHeaderCellDef> Part # </th>
+        <td mat-cell *matCellDef="let d">{{ d.partNumber }}</td>
+      </ng-container>
+      <ng-container matColumnDef="buildingName">
+        <th mat-header-cell *matHeaderCellDef> Building </th>
+        <td mat-cell *matCellDef="let d">{{ d.buildingName }}</td>
+      </ng-container>
+      <ng-container matColumnDef="deviceType">
+        <th mat-header-cell *matHeaderCellDef> Type </th>
+        <td mat-cell *matCellDef="let d">{{ d.deviceType }}</td>
+      </ng-container>
+      <ng-container matColumnDef="actions">
+        <th mat-header-cell *matHeaderCellDef></th>
+        <td mat-cell *matCellDef="let d">
+          <div class="actions-row">
+            <a mat-button color="primary" [routerLink]="['/devices', d.deviceId]">
+              <mat-icon>visibility</mat-icon> Summary
+            </a>
+          </div>
+        </td>
+      </ng-container>
 
-        <tr mat-header-row *matHeaderRowDef="cols"></tr>
-        <tr mat-row *matRowDef="let row; columns: cols;"></tr>
-      </table>
+      <tr mat-header-row *matHeaderRowDef="cols"></tr>
+      <tr mat-row *matRowDef="let row; columns: cols;"></tr>
+    </table>
 
-      <p *ngIf="!loading() && (!devices() || devices()!.length === 0)" class="muted">
-        No devices found. Create one to get started.
-      </p>
-    </mat-card>
-  `,
+    <p *ngIf="!loading() && (!devices() || devices()!.length === 0)" class="muted">
+      No devices found. Create one to get started.
+    </p>
+  </mat-card>
+`,
+
   styles: [`
     .header { display:flex; align-items:center; }
     .spacer { flex: 1 1 auto; }

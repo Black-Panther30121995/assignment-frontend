@@ -62,7 +62,6 @@ export class ShelfSummaryComponent implements OnInit {
     this.shelves.getById(this.shelfId).subscribe({
       next: s => {
         this.shelf.set(s);
-        // Discover attachment by scanning device views (works with your existing APIs)
         this.devices.list().subscribe({
           next: ds => {
             let found = false, idx = 0;

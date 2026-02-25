@@ -13,50 +13,54 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
   standalone: true,
   selector: 'app-shelves-list',
   imports: [NgIf, RouterLink, MatTableModule, MatButtonModule, MatIconModule, MatCardModule, MatProgressSpinnerModule],
-  template: `
-    <mat-card>
-      <div class="header">
-        <h2>Shelves</h2>
-        <span class="spacer"></span>
-        <a mat-raised-button color="primary" routerLink="/shelves/new"><mat-icon>add</mat-icon> Create Shelf</a>
-      </div>
+template: `
+  <mat-card class="stack">
+    <div class="row">
+      <h2 class="section-title">Shelves</h2>
+      <span class="spacer"></span>
+      <a mat-raised-button color="primary" routerLink="/shelves/new">
+        <mat-icon>add</mat-icon> Create Shelf
+      </a>
+    </div>
 
-      <div *ngIf="loading()" class="center"><mat-spinner diameter="42"></mat-spinner></div>
+    <div *ngIf="loading()" class="center"><mat-spinner diameter="42"></mat-spinner></div>
 
-      <table mat-table [dataSource]="shelves() || []" *ngIf="!loading()">
-        <ng-container matColumnDef="shelfName">
-          <th mat-header-cell *matHeaderCellDef> Name </th>
-          <td mat-cell *matCellDef="let s">{{ s.shelfName }}</td>
-        </ng-container>
-        <ng-container matColumnDef="partNumber">
-          <th mat-header-cell *matHeaderCellDef> Part # </th>
-          <td mat-cell *matCellDef="let s">{{ s.partNumber }}</td>
-        </ng-container>
-        <ng-container matColumnDef="shelfId">
-          <th mat-header-cell *matHeaderCellDef> Shelf ID </th>
-          <td mat-cell *matCellDef="let s">{{ s.shelfId }}</td>
-        </ng-container>
-        <ng-container matColumnDef="actions">
-          <th mat-header-cell *matHeaderCellDef></th>
-          <td mat-cell *matCellDef="let s">
+    <table mat-table [dataSource]="shelves() || []" *ngIf="!loading()">
+      <ng-container matColumnDef="shelfName">
+        <th mat-header-cell *matHeaderCellDef> Name </th>
+        <td mat-cell *matCellDef="let s">{{ s.shelfName }}</td>
+      </ng-container>
+      <ng-container matColumnDef="partNumber">
+        <th mat-header-cell *matHeaderCellDef> Part # </th>
+        <td mat-cell *matCellDef="let s">{{ s.partNumber }}</td>
+      </ng-container>
+      <ng-container matColumnDef="shelfId">
+        <th mat-header-cell *matHeaderCellDef> Shelf ID </th>
+        <td mat-cell *matCellDef="let s">{{ s.shelfId }}</td>
+      </ng-container>
+      <ng-container matColumnDef="actions">
+        <th mat-header-cell *matHeaderCellDef></th>
+        <td mat-cell *matCellDef="let s">
+          <div class="actions-row">
             <a mat-button color="primary" [routerLink]="['/shelves', s.shelfId]">
               <mat-icon>visibility</mat-icon> Summary
             </a>
             <a mat-button color="primary" [routerLink]="['/shelves', 'new']" [queryParams]="{shelfId: s.shelfId}">
               <mat-icon>edit</mat-icon> Edit
             </a>
-          </td>
-        </ng-container>
+          </div>
+        </td>
+      </ng-container>
 
-        <tr mat-header-row *matHeaderRowDef="cols"></tr>
-        <tr mat-row *matRowDef="let row; columns: cols;"></tr>
-      </table>
+      <tr mat-header-row *matHeaderRowDef="cols"></tr>
+      <tr mat-row *matRowDef="let row; columns: cols;"></tr>
+    </table>
 
-      <p *ngIf="!loading() && (!shelves() || shelves()!.length === 0)" class="muted">
-        No shelves found. Create one to get started.
-      </p>
-    </mat-card>
-  `,
+    <p *ngIf="!loading() && (!shelves() || shelves()!.length === 0)" class="muted">
+      No shelves found. Create one to get started.
+    </p>
+  </mat-card>
+`,
   styles: [`
     .header { display:flex; align-items:center; }
     .spacer { flex: 1 1 auto; }

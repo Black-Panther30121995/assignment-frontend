@@ -109,7 +109,6 @@ export class AttachShelfDialog implements OnInit {
   });
 
   onSelect(shelfId: string) {
-    // if disabled, ignore
     if (this.attachedSet().has(shelfId)) return;
     this.selectedId.set(shelfId);
   }

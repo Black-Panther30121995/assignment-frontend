@@ -18,35 +18,38 @@ import { ShelfSummaryDialog } from './features/shelves/shelf-summary-dialog';
     MatToolbarModule, MatButtonModule, MatIconModule,
     MatChipsModule, MatSnackBarModule, NgIf
   ],
-  template: `
-    <mat-toolbar color="primary" class="app-toolbar">
-      <span class="brand" routerLink="/">Assignment</span>
+template: `
+  <mat-toolbar color="primary" class="app-toolbar">
+    <span class="brand" routerLink="/">Assignment</span>
 
-      <span class="spacer"></span>
+    <span class="spacer"></span>
 
-      <a mat-button routerLink="/">Devices</a>
-      <a mat-button routerLink="/devices/new">Create Device</a>
-      <a mat-button routerLink="/shelves">Shelves</a>
-      <a mat-button routerLink="/shelves/new">Create Shelf</a>
+    <a mat-button routerLink="/">Devices</a>
+    <a mat-button routerLink="/devices/new">Create Device</a>
+    <a mat-button routerLink="/shelves">Shelves</a>
+    <a mat-button routerLink="/shelves/new">Create Shelf</a>
 
-      <button mat-stroked-button (click)="openShelfSummaryDialog()">
-        <mat-icon>view_list</mat-icon>
-        Shelf Summary
-      </button>
+    <button mat-stroked-button (click)="openShelfSummaryDialog()">
+      <mat-icon>view_list</mat-icon>
+      Shelf Summary
+    </button>
 
-      <span class="spacer"></span>
+    <span class="spacer"></span>
 
-      <ng-container *ngIf="healthService.health() as h">
-        <mat-chip-set>
-          <mat-chip [color]="h.neo4jConnectivity ? 'accent' : 'warn'" selected>
-            <mat-icon>{{ h.neo4jConnectivity ? 'check_circle' : 'error' }}</mat-icon>
-            Neo4j: {{ h.neo4jConnectivity ? 'Connected' : 'Unavailable' }}
-          </mat-chip>
-        </mat-chip-set>
-      </ng-container>
-    </mat-toolbar>
+    <ng-container *ngIf="healthService.health() as h">
+      <mat-chip-set>
+        <mat-chip [color]="h.neo4jConnectivity ? 'accent' : 'warn'" selected>
+          <mat-icon>{{ h.neo4jConnectivity ? 'check_circle' : 'error' }}</mat-icon>
+          Neo4j: {{ h.neo4jConnectivity ? 'Connected' : 'Unavailable' }}
+        </mat-chip>
+      </mat-chip-set>
+    </ng-container>
+  </mat-toolbar>
+
+  <div class="container">
     <router-outlet></router-outlet>
-  `,
+  </div>
+`,
   styles: [`
     .app-toolbar { position: sticky; top: 0; z-index: 10; }
     .brand { font-weight: 600; cursor: pointer; }

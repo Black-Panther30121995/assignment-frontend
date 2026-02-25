@@ -1,38 +1,146 @@
+/* ============================
+   Global Theme + Utilities
+   ============================ */
 
-// Include theming for Angular Material with `mat.theme()`.
-// This Sass mixin will define CSS variables that are used for styling Angular Material
-// components according to the Material 3 design spec.
-// Learn more about theming and how to use it for your application's
-// custom components at https://material.angular.dev/guide/theming
+/* Material Theme (Angular Material v16+/17 style with @use) */
 @use '@angular/material' as mat;
 
-html {
-  height: 100%;
-  @include mat.theme((
-    color: (
-      primary: mat.$azure-palette,
-      tertiary: mat.$blue-palette,
-    ),
-    typography: Roboto,
-    density: 0,
-  ));
+@include mat.core();
+
+/* Color palettes (tweak if you like) */
+$primary: mat.m2-define-palette(mat.$m2-indigo-palette, 600);
+$accent:  mat.m2-define-palette(mat.$m2-light-blue-palette, 500);
+$warn:    mat.m2-define-palette(mat.$m2-red-palette);
+
+/* Typography */
+$typography: mat.m2-define-typography-config(
+  $font-family: 'Inter, Roboto, "Helvetica Neue", Arial, sans-serif',
+  $headline-5: mat.m2-define-typography-level(24px, 32px, 600),
+  $headline-6: mat.m2-define-typography-level(20px, 28px, 600),
+  $subtitle-1: mat.m2-define-typography-level(16px, 24px, 500),
+  $body-1:     mat.m2-define-typography-level(14px, 20px, 400),
+  $button:     mat.m2-define-typography-level(14px, 20px, 600),
+);
+
+/* Density: slightly compact */
+$theme: mat.m2-define-light-theme((
+  color: (
+    primary: $primary,
+    accent: $accent,
+    warn: $warn
+  ),
+  typography: $typography,
+  density: -1
+));
+
+@include mat.all-component-themes($theme);
+@include mat.all-component-typographies($theme);
+
+/* ============================
+   CSS Variables (spacing scale)
+   ============================ */
+:root {
+  --space-4: 4px;
+  --space-8: 8px;
+  --space-12: 12px;
+  --space-16: 16px;
+  --space-20: 20px;
+  --space-24: 24px;
+  --space-32: 32px;
+
+  --radius-8: 8px;
+  --radius-12: 12px;
+
+  --card-pad: var(--space-16);
 }
 
+/* Base */
+html, body { height: 100%; }
 body {
-  // Default the application to a light color theme. This can be changed to
-  // `dark` to enable the dark color theme, or to `light dark` to defer to the
-  // user's system settings.
-  color-scheme: light;
-
-  // Set a default background, font and text colors for the application using
-  // Angular Material's system-level CSS variables. Learn more about these
-  // variables at https://material.angular.dev/guide/system-variables
-  background-color: var(--mat-sys-surface);
-  color: var(--mat-sys-on-surface);
-  font: var(--mat-sys-body-medium);
-
-  // Reset the user agent margin.
   margin: 0;
-  height: 100%;
+  background: #fafafa;
+  color: #1f1f1f;
 }
-/* You can add global styles to this file, and also import other style files */
+
+/* Toolbar polish */
+.app-toolbar {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  backdrop-filter: saturate(120%) blur(4px);
+}
+.brand { font-weight: 700; letter-spacing: 0.2px; cursor: pointer; }
+
+/* Container */
+
+.container {
+  max-width: 1200px;
+  margin-inline: auto;
+  padding: 50px; /* was 16px */
+}
+
+
+@media (min-width: 1200px) {
+  .container { padding: 32px; }
+}
+
+/* Utility layout classes */
+.stack {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-16);
+}
+.row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-12);
+}
+.row.wrap { flex-wrap: wrap; }
+.spacer { flex: 1 1 auto; }
+
+/* Grid helpers */
+.grid-auto {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: var(--space-16);
+}
+
+/* Text helpers */
+.muted { opacity: 0.75; }
+.center { display:flex; justify-content:center; align-items:center; padding: var(--space-24); }
+
+/* Cards */
+mat-card {
+  padding: var(--card-pad) !important;
+  border-radius: var(--radius-12) !important;
+}
+.section-title {
+  margin: 0 0 var(--space-12) 0;
+}
+
+/* Tables */
+table { width: 100%; }
+.mat-mdc-row:hover .mat-mdc-cell { background: #fafcff; }
+
+/* Actions row */
+.actions-row {
+  display: flex;
+  gap: var(--space-8);
+  flex-wrap: wrap;
+}
+
+/* Forms */
+mat-form-field { width: 100%; }
+
+/* Snackbar error color */
+.snack-error { --mdc-snackbar-container-color: #b71c1c; --mdc-snackbar-supporting-text-color: #fff; }
+
+/* Dialog widths */
+.m-dialog-sm .mdc-dialog__surface { width: 420px; max-width: calc(100vw - 32px); }
+.m-dialog-md .mdc-dialog__surface { width: 640px; max-width: calc(100vw - 32px); }
+
+/* Breakpoints */
+@media (max-width: 720px) {
+  .hide-xs { display: none !important; }
+  .container { padding: var(--space-12); }
+}

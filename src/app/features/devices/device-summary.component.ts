@@ -14,79 +14,87 @@ import { AttachShelfDialog } from './attach-shelf.dialog';
   standalone: true,
   selector: 'app-device-summary',
   imports: [NgIf, NgFor, RouterLink, MatCardModule, MatButtonModule, MatIconModule, MatDialogModule],
-  template: `
-    <mat-card *ngIf="view() as v" class="device-summary">
-      <div class="header">
-        <h2>{{ v.device.deviceName }}</h2>
-        <span class="spacer"></span>
-        <a mat-stroked-button color="primary" [routerLink]="['/devices', 'new']" [queryParams]="{deviceId: v.device.deviceId}">
-          <mat-icon>edit</mat-icon> Edit
-        </a>
-        <button mat-stroked-button color="warn" (click)="deleteDevice(v.device.deviceId)">
-          <mat-icon>delete</mat-icon> Delete
-        </button>
-      </div>
+// template
+template: `
+  <mat-card *ngIf="view() as v" class="stack">
+    <div class="row">
+      <h2 class="section-title">{{ v.device.deviceName }}</h2>
+      <span class="spacer"></span>
+      <a mat-stroked-button color="primary" [routerLink]="['/devices', 'new']" [queryParams]="{deviceId: v.device.deviceId}">
+        <mat-icon>edit</mat-icon> Edit
+      </a>
+      <button mat-stroked-button color="warn" (click)="deleteDevice(v.device.deviceId)">
+        <mat-icon>delete</mat-icon> Delete
+      </button>
+    </div>
 
-      <div class="details-grid">
-        <mat-card class="detail-card">
-          <h3>Details</h3>
-          <div class="kv"><span>Part #</span><span>{{ v.device.partNumber }}</span></div>
-          <div class="kv"><span>Building</span><span>{{ v.device.buildingName }}</span></div>
-          <div class="kv"><span>Type</span><span>{{ v.device.deviceType }}</span></div>
-          <div class="kv"><span>Shelf Positions</span><span>{{ v.device.numberOfShelfPositions }}</span></div>
+    <div class="grid-auto">
+      <mat-card class="stack mat-elevation-z1">
+        <h3 class="section-title">Details</h3>
+        <div class="row" style="justify-content: space-between;"><span class="muted">Part #</span><span>{{ v.device.partNumber }}</span></div>
+        <div class="row" style="justify-content: space-between;"><span class="muted">Building</span><span>{{ v.device.buildingName }}</span></div>
+        <div class="row" style="justify-content: space-between;"><span class="muted">Type</span><span>{{ v.device.deviceType }}</span></div>
+        <div class="row" style="justify-content: space-between;"><span class="muted">Shelf Positions</span><span>{{ v.device.numberOfShelfPositions }}</span></div>
+      </mat-card>
+    </div>
+
+    <mat-card class="stack mat-elevation-z1">
+      <h3 class="section-title">Shelf Positions</h3>
+      <div class="grid-auto">
+        <mat-card class="stack" *ngFor="let p of v.positions">
+          <div class="row" style="justify-content: space-between;">
+            <span class="muted">#{{ p.index }}</span>
+            <span class="status" [class.empty]="!p.shelf">{{ p.shelf ? 'Occupied' : 'Empty' }}</span>
+          </div>
+
+          <div>
+            <ng-container *ngIf="p.shelf; else empty">
+              <div style="font-weight:600;">{{ p.shelf!.shelfName }}</div>
+              <div class="muted" style="font-size:12px;">{{ p.shelf!.shelfId }}</div>
+            </ng-container>
+            <ng-template #empty>
+              <div class="muted">No shelf attached</div>
+            </ng-template>
+          </div>
+
+          <div class="actions-row">
+            <button *ngIf="!p.shelf" mat-raised-button color="primary" (click)="openAttachDialog(p.shelfPositionId)">
+              <mat-icon>add_link</mat-icon> Attach Shelf
+            </button>
+
+            <a *ngIf="p.shelf" mat-stroked-button color="primary" [routerLink]="['/shelves', p.shelf!.shelfId]">
+              <mat-icon>open_in_new</mat-icon> Open Shelf
+            </a>
+
+            <button *ngIf="p.shelf" mat-stroked-button color="warn" (click)="detach(p.shelfPositionId)">
+              <mat-icon>link_off</mat-icon> Detach
+            </button>
+          </div>
         </mat-card>
       </div>
-
-      <mat-card class="positions">
-        <h3>Shelf Positions</h3>
-        <div class="positions-grid">
-          <mat-card class="pos-card" *ngFor="let p of v.positions">
-            <div class="pos-header">
-              <span class="index">#{{ p.index }}</span>
-              <span class="status" [class.empty]="!p.shelf">{{ p.shelf ? 'Occupied' : 'Empty' }}</span>
-            </div>
-
-            <div class="pos-body">
-              <ng-container *ngIf="p.shelf; else empty">
-                <div class="shelf-name">{{ p.shelf!.shelfName }}</div>
-                <div class="shelf-id">{{ p.shelf!.shelfId }}</div>
-              </ng-container>
-              <ng-template #empty>
-                <div class="muted">No shelf attached</div>
-              </ng-template>
-            </div>
-
-            <div class="actions">
-              <button *ngIf="!p.shelf" mat-raised-button color="primary" (click)="openAttachDialog(p.shelfPositionId)">
-                <mat-icon>add_link</mat-icon> Attach Shelf
-              </button>
-
-              <a *ngIf="p.shelf" mat-stroked-button color="primary" [routerLink]="['/shelves', p.shelf!.shelfId]">
-                <mat-icon>open_in_new</mat-icon> Open Shelf
-              </a>
-
-              <button *ngIf="p.shelf" mat-stroked-button color="warn" (click)="detach(p.shelfPositionId)">
-                <mat-icon>link_off</mat-icon> Detach
-              </button>
-            </div>
-          </mat-card>
-        </div>
-      </mat-card>
     </mat-card>
+  </mat-card>
 
-    <div *ngIf="!view()" class="center"><mat-icon>hourglass_empty</mat-icon> Loading...</div>
-  `,
+  <div *ngIf="!view()" class="center"><mat-icon>hourglass_empty</mat-icon> Loading...</div>
+`,
   styles: [`
+    .status {
+    font-size: 12px; padding: 2px 8px; border-radius: 10px;
+    background: #e8f5e9; color:#1b5e20;
+  }
+  .status.empty {
+    background:#fff3e0; color:#e65100;
+  }
     .device-summary { display:flex; flex-direction:column; gap:16px; }
     .header { display:flex; align-items:center; gap:8px; }
     .spacer { flex:1 1 auto; }
 
     .details-grid { display:grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap:12px; }
-    .detail-card { padding:12px; }
+    .detail-card { padding:50px; }
     .kv { display:flex; justify-content:space-between; padding:4px 0; gap:8px; }
     .kv span:first-child { opacity:0.75; }
 
-    .positions { padding:12px; }
+    .positions { padding:50px; }
     .positions-grid { display:grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap:12px; }
 
     .pos-card { display:flex; flex-direction:column; gap:8px; padding:12px; }
