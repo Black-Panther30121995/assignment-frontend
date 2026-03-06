@@ -8,7 +8,7 @@ import { HealthService } from './core/health.service';
 import { MatChipsModule } from '@angular/material/chips';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatDialog } from '@angular/material/dialog';
-import { ShelfSummaryDialog } from './features/shelves/shelf-summary-dialog';
+
 
 @Component({
   selector: 'app-root',
@@ -29,14 +29,11 @@ template: `
     <a mat-button routerLink="/shelves">Shelves</a>
     <a mat-button routerLink="/shelves/new">Create Shelf</a>
 
-    <button mat-stroked-button (click)="openShelfSummaryDialog()">
-      <mat-icon>view_list</mat-icon>
-      Shelf Summary
-    </button>
+
 
     <span class="spacer"></span>
 
-    <ng-container *ngIf="healthService.health() as h">
+    <ng-container *ngIf="healthService.health() as h" style="background-color: white;">
       <mat-chip-set>
         <mat-chip [color]="h.neo4jConnectivity ? 'accent' : 'warn'" selected>
           <mat-icon>{{ h.neo4jConnectivity ? 'check_circle' : 'error' }}</mat-icon>
@@ -63,9 +60,5 @@ export class AppComponent {
 
   constructor() { this.healthService.load(); }
 
-  openShelfSummaryDialog() {
-    this.dialog.open(ShelfSummaryDialog).afterClosed().subscribe(id => {
-      if (id) this.router.navigate(['/shelves', id]);
-    });
-  }
+
 }

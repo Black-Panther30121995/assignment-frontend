@@ -1,4 +1,4 @@
-import { Component, OnInit, inject, signal } from '@angular/core';
+import { Component, OnInit, inject, signal, computed } from '@angular/core';
 import { ReactiveFormsModule, FormBuilder, Validators } from '@angular/forms';
 import { DeviceService, CreateDeviceRequest, UpdateDeviceRequest } from '../../core/device.service';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -6,12 +6,13 @@ import { MatCardModule } from '@angular/material/card';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
+import { NgIf } from '@angular/common';
 
 @Component({
   standalone: true,
   selector: 'app-device-form',
-  imports: [ReactiveFormsModule, MatCardModule, MatFormFieldModule, MatInputModule, MatButtonModule],
-template: `
+  imports: [ReactiveFormsModule, MatCardModule, MatFormFieldModule, MatInputModule, MatButtonModule,NgIf],
+  template: `
   <mat-card class="stack" style="max-width: 860px; margin-inline: auto;">
     <h2>{{ isEdit() ? 'Update Device' : 'Create Device' }}</h2>
 
@@ -37,9 +38,19 @@ template: `
           <input matInput formControlName="deviceType" required>
         </mat-form-field>
 
+        <!-- Shelf-related: disable in edit mode -->
         <mat-form-field appearance="outline">
           <mat-label>Number of Shelf Positions</mat-label>
-          <input type="number" min="1" matInput formControlName="numberOfShelfPositions" required>
+          <input
+            type="number"
+            min="1"
+            matInput
+            formControlName="numberOfShelfPositions"
+            [readonly]="isEdit()"
+            [disabled]="isEdit()"
+            required
+          >
+          <mat-hint *ngIf="isEdit()">Shelf positions cannot be updated after creation</mat-hint>
         </mat-form-field>
       </div>
 
@@ -85,6 +96,9 @@ export class DeviceFormComponent implements OnInit {
     if (id) {
       this.isEdit.set(true);
       this.deviceId.set(id);
+      // Disable the control in edit mode for extra safety
+      this.form.get('numberOfShelfPositions')?.disable({ emitEvent: false });
+
       this.deviceService.getView(id).subscribe({
         next: v => this.form.patchValue({
           deviceName: v.device.deviceName,
@@ -101,19 +115,29 @@ export class DeviceFormComponent implements OnInit {
     if (this.form.invalid) return;
     this.submitting.set(true);
 
-    const payload = this.form.value as CreateDeviceRequest | UpdateDeviceRequest;
+    if (this.isEdit()) {
+      // For update: exclude shelf-related field
+      const { deviceName, partNumber, buildingName, deviceType } = this.form.getRawValue(); // getRawValue() returns disabled controls too
+      const payload: UpdateDeviceRequest = { deviceName, partNumber, buildingName, deviceType } as UpdateDeviceRequest;
 
-    const obs = this.isEdit()
-      ? this.deviceService.update(this.deviceId()!, payload)
-      : this.deviceService.create(payload);
-
-    obs.subscribe({
-      next: d => {
-        alert(this.isEdit() ? 'Device updated' : 'Device created');
-        this.router.navigate(['/devices', (d as any).deviceId ?? this.deviceId()]);
-      },
-      error: _ => this.submitting.set(false)
-    });
+      this.deviceService.update(this.deviceId()!, payload).subscribe({
+        next: d => {
+          alert('Device updated');
+          this.router.navigate(['/devices', (d as any).deviceId ?? this.deviceId()]);
+        },
+        error: _ => this.submitting.set(false)
+      });
+    } else {
+      // For create: send full payload including shelf positions
+      const payload = this.form.value as CreateDeviceRequest;
+      this.deviceService.create(payload).subscribe({
+        next: d => {
+          alert('Device created');
+          this.router.navigate(['/devices', (d as any).deviceId ?? this.deviceId()]);
+        },
+        error: _ => this.submitting.set(false)
+      });
+    }
   }
 
   cancel() { history.back(); }
